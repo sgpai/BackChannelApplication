@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BackChannelApp</title>
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body >
+    <div>
+    <table style="background:#3b5998" height= "5%" width="100%" class="srch" >
+        <tr>
+          <td style="color: #ffffff; font-family:verdana; font: 600 ">
+            <h1> Backchannel Application </h1>
+            <% if(session[:userName].nil?) %>
+                <%= link_to image_tag("/assets/home-icon.gif", :alt => 'home-icon'), root_path %>
+            <% else %>
+                <%= link_to image_tag("/assets/home-icon.gif", :alt => 'home-icon'), User.find(:all, :conditions => ["userName = ?", session[:userName]]) %>
+            <% end %>
+          </td>
+          <td colspan="2"></td>
+
+        <% if(session[:userName] != nil) %>
+            <% @loggedInUser = User.find_by_userName(session[:userName]) %>
+                <td></td>
+                <td align="right">
+                    <%= link_to "#{session[:userName]}", @loggedInUser ,{:style => 'color:#FFFFFF'} ,:notice => ''%>
+                    <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon'), edit_user_path(User.find_by_userName(session[:userName])) %>
+                    <%= link_to "Sign Out", logins_signout_path , {:style => 'color:#FFFFFF'}%>
+                </td>
+        </tr>
+
+        <% end %>
+
+        <%= form_tag(:controller => :posts, :action => :search) do %>
+            <tr>
+                <td></td>
+                <td colspan="3"></td>
+                <td align="right">
+                    <%= search_field_tag :searchQuery %>
+                    <%= select_tag "selectSearch", options_for_select(['searchUser','searchContent'])%>
+                    <%= image_submit_tag("icon_search.png", :alt => 'search-icon') %>
+                </td>
+            </tr>
+        <% end  %>
+    </table>
+  </div>
+<%= yield %>
+
+</body>
+</html>

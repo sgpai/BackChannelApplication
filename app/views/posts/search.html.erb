@@ -1,0 +1,39 @@
+<p id="notice"><b><%= notice %></b></p>
+<h1>Search Results</h1>
+<br>
+<br>
+<% if(@posts.nil?) %>
+    <p style="color: red; font-size: 20"><b>Search yielded no results.</b></p>
+<% elsif (@posts.length == 0) %>
+    <p style="color: red; font-size: 20"><b>Search yielded no results.</b></p>
+<% else %>
+    <p style="color: green; font-size: 20">
+      <% if(@posts.length == 1)%>
+          <b>Search yielded 1 result.</b>
+      <% else %>
+          <b>Search yielded <%= @posts.length %> results.</b>
+      <% end %>
+    </p>
+    <% @posts.each do |post| %>
+        <fieldset>
+          <% if(session[:userName] != nil) %>
+                <%= link_to(post.postString, post) %>
+
+                <div align="right">
+                    <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + post.id.to_s()), edit_post_path(post) %>
+                    <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + post.id.to_s()), post, confirm: 'Are you sure?', method: :delete %>
+                </div>
+          <% else %>
+                <%= post.postString %>
+          <% end %>
+        </fieldset>
+        <br />
+    <% end %>
+<% end %>
+
+<% if(session[:userName] != nil) %>
+    <%= link_to image_tag("/assets/newPost.button.png", :alt => 'new-post-icon'), new_post_path %>
+    <%= link_to image_tag("/assets/showPosts.button.png", :alt => 'show-posts-icon'), posts_path %>
+<% else %>
+    <%= link_to image_tag("/assets/back.button.png", :alt => 'back-button-icon'), root_path %>
+<% end %>

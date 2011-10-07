@@ -1,0 +1,30 @@
+<p id="notice" style="color: #ff0000; font-size: 20"><b><%= notice %></b></p>
+
+<fieldset>
+    <legend>
+      <b>User administration</b>
+    </legend>
+    <%= link_to image_tag("/assets/yourAccount.button.png", :alt => 'your-account-icon'), users_showaccountdetails_path %>
+    <%= if(session[:loginType] == 'admin')
+     link_to image_tag("/assets/userDashboard.button.png", :alt => 'user-dashboard-icon' ), users_path
+    end %>
+    <br />
+    <br />
+</fieldset>
+
+<% if(session[:loginType] == 'admin') %>
+    <br>
+    <br>
+    <fieldset>
+      <legend>
+        <b>Posts Activity</b>
+      </legend>
+      <%= link_to image_tag("/assets/seePostActivity.button.png", :alt => 'see-postsActivity-icon' ), posts_showpostactivity_path %>
+    </fieldset>
+
+<% end %>
+
+<br/>
+<br/>
+
+<%= link_to image_tag("/assets/showPosts.button.png", :alt => 'show-posts-icon'), posts_path %>

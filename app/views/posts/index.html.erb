@@ -1,0 +1,426 @@
+<p id="notice"><b><%= notice %></b></p>
+<div>
+<h1>All Posts</h1>
+
+<% if(@toggleFlag == "false" || @toggleFlag.nil?) %>
+    <br />
+    <%= link_to image_tag('newPost.button.png', :alt => 'new-post-icon'), new_post_path %>&nbsp<%= link_to image_tag('togglePosts.button.png', :alt => 'toggle-post-icon'), posts_toggle_path %>
+    <br>
+    <br>
+
+    <fieldset style="border-style: solid; border-color: #a52a2a">
+      <legend><b>Today's posts</b></legend>
+        <% if(@todaysPosts.length == 0) %>
+            <div style="color: #a52a2a" align="center">
+                No posts today.
+            </div>
+        <% else %>
+            <% @todaysPosts.each do |todayPost| %>
+               <table width = "200" height = "50">
+                    <tr>
+                        <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                          <%= Vote.find_all_by_post_id(todayPost.id).length %>
+                            <br />
+                            <% if(todayPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                                <div style="background-color: red"><i>Author</i></div>
+                            <% else %>
+                                <%  @findVote = Array.new
+                                    @findVote = Vote.find_all_by_post_id(todayPost.id)
+                                    @foundFlag = false
+                                    @findVote.each do
+                                        |vote|
+                                        if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                            @foundFlag = true
+                                        end
+                                    end
+                                %>
+                                <% if(@foundFlag == false) %>
+                                    <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + todayPost.id.to_s()), posts_vote_path(:id => todayPost.id, :toggleFlag => @toggleFlag) %>
+                                <% elsif(@foundFlag == true) %>
+                                    <div style="background-color: green"><i>Voted</i></div>
+                                <% end %>
+                            <% end %>
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                            <%= link_to todayPost.postString, todayPost %>
+                        </td>
+                    </tr>
+                    <tr rowspan="20"><td></td></tr>
+                </table>
+
+                <div align="right">
+                    <%
+                        userName = User.find(todayPost.user_id).userName
+                        if(userName.to_s == 'UserDeleted')
+                    %>
+                        <%= userName %>
+                    <% else %>
+                        <%= userName %>
+                    <% end %>
+
+                    <% if(todayPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                       <%= " | " %>
+                       <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + todayPost.id.to_s()), edit_post_path(todayPost) %>
+                    <% end %>
+
+                    <% if(session[:loginType] == 'admin') %>
+                       <%= " | " %>
+                       <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + todayPost.id.to_s()), todayPost, confirm: 'Are you sure?', method: :delete %>
+                    <% end %>
+                    <%= " | " %>
+                    <%= link_to image_tag("/assets/reply-icon.gif", :alt => 'reply-icon-' + todayPost.id.to_s()), posts_reply_path(:id => todayPost.id) %>
+                </div>
+                <hr style="border-color: #add8e6">
+            <% end %>
+
+        <% end %>
+    </fieldset>
+
+    <br />
+    <br />
+
+    <fieldset style="border-style: solid; border-color: blue">
+      <legend><b>Other Posts</b></legend>
+        <% if(@parentPosts.length ==0 ) %>
+            <div style="color: red" align="center">
+                No posts.
+            </div>
+        <% else %>
+            <% @parentPosts.each do |parentPost| %>
+              <table width = "200" height = "50">
+                <tr>
+                    <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                        <%= Vote.find_all_by_post_id(parentPost.id).length %>
+                        <br />
+                        <% if(parentPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                            <div style="background-color: red"><i>Author</i></div>
+                        <% else %>
+                            <%  @findVote = Array.new
+                                @findVote = Vote.find_all_by_post_id(parentPost.id)
+                                @foundFlag = false
+                                @findVote.each do
+                                    |vote|
+                                    if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                        @foundFlag = true
+                                    end
+                                end
+                            %>
+                            <% if(@foundFlag == false) %>
+                                <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + parentPost.id.to_s()), posts_vote_path(:id => parentPost.id, :toggleFlag => @toggleFlag) %>
+                            <% elsif(@foundFlag == true) %>
+                                <div style="background-color: green"><i>Voted</i></div>
+                            <% end %>
+                        <% end %>
+                    </td>
+                    <td>
+    
+                    </td>
+                    <td>
+                        <%= link_to parentPost.postString, parentPost %>
+                    </td>
+                </tr>
+                <tr rowspan="20"><td></td></tr>
+              </table>
+    
+              <div align="right">
+                <%
+                    userName = User.find(parentPost.user_id).userName
+                    if(userName.to_s == 'UserDeleted')
+                %>
+                    <%= userName %>
+                <% else %>
+                    <%= userName %>
+                <% end %>
+
+                <% if(parentPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                   <%= " | " %>
+                   <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + parentPost.id.to_s()), edit_post_path(parentPost) %>
+                <% end %>
+    
+                <% if(session[:loginType] == 'admin') %>
+                   <%= " | " %>
+                   <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + parentPost.id.to_s()), parentPost, confirm: 'Are you sure?', method: :delete %>
+                <% end %>
+                <%= " | " %>
+                <%= link_to image_tag("/assets/reply-icon.gif", :alt => 'reply-icon-' + parentPost.id.to_s()), posts_reply_path(:id => parentPost.id) %>
+              </div>
+              <hr style="border-color: #add8e6">
+            <% end %>
+        <% end %>
+    </fieldset>
+
+<% elsif (@toggleFlag == "true") %>
+    <br />
+
+    <%= link_to image_tag('newPost.button.png', :alt => 'new-post-icon'), new_post_path %>&nbsp<%= link_to image_tag('togglePosts.button.png', :alt => 'toggle-post-icon'), posts_path %>
+    <br>
+    <br>
+
+
+    <b><center>Today's posts</center></b>
+    <% if(@todaysPosts.length == 0) %>
+        <div style="color: #a52a2a" align="center">
+            No posts today.
+        </div>
+    <% else %>
+        <% @todaysPosts.each do |todayPost| %>
+           <fieldset style="border-style: solid; border-color: brown">
+           <table width = "200" height = "50">
+                <tr>
+                    <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                      <%= Vote.find_all_by_post_id(todayPost.id).length %>
+                        <br />
+                        <% if(todayPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                            <div style="background-color: red"><i>Author</i></div>
+                        <% else %>
+                            <%  @findVote = Array.new
+                                @findVote = Vote.find_all_by_post_id(todayPost.id)
+                                @foundFlag = false
+                                @findVote.each do
+                                    |vote|
+                                    if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                        @foundFlag = true
+                                    end
+                                end
+                            %>
+                            <% if(@foundFlag == false) %>
+                                <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + todayPost.id.to_s()), posts_vote_path(:id => todayPost.id, :toggleFlag => @toggleFlag) %>
+                            <% elsif(@foundFlag == true) %>
+                                <div style="background-color: green"><i>Voted</i></div>
+                            <% end %>
+                        <% end %>
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                        <%= link_to todayPost.postString, todayPost %>
+                    </td>
+                </tr>
+                <tr rowspan="20"><td></td></tr>
+            </table>
+
+            <div align="right">
+                <%
+                    userName = User.find(todayPost.user_id).userName
+                    if(userName.to_s == 'UserDeleted')
+                %>
+                    <%= userName %>
+                <% else %>
+                    <%= userName %>
+                <% end %>
+
+                <% if(todayPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                   <%= " | " %>
+                   <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + todayPost.id.to_s()), edit_post_path(todayPost) %>
+                <% end %>
+
+                <% if(session[:loginType] == 'admin') %>
+                   <%= " | " %>
+                   <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + todayPost.id.to_s()), todayPost, confirm: 'Are you sure?', method: :delete %>
+                <% end %>
+                <%= " | " %>
+                <%= link_to image_tag("/assets/reply-icon.gif", :alt => 'reply-icon-' + todayPost.id.to_s()), posts_reply_path(:id => todayPost.id) %>
+            </div>
+
+            <b>All Replies</b>
+            <br />
+            <% @childPostForToggle = Post.find(:all, :conditions => ["parentPostID = ?",todayPost.id] ) %>
+
+            <% if(@childPostForToggle.length == 1) %>
+                <div style="color: red">
+                    No replies for this post.
+                </div>
+
+            <% elsif(@childPostForToggle.length > 1) %>
+                <fieldset style="border-style: solid; border-color: #a52a2a">
+                    <% @childPostForToggle.each do |childPosts| %>
+                        <% if (childPosts.id != childPosts.parentPostID) %>
+                             <table width = "200" height = "50">
+                                 <tr>
+                                    <td></td>
+                                    <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                                        <%= Vote.find_all_by_post_id(childPosts.id).length %>
+                                        <br />
+                                        <% if(childPosts.user_id == User.find_by_userName(session[:userName]).id) %>
+                                            <div style="background-color: red"><i>Author</i></div>
+                                        <% else %>
+                                            <%  @findVote = Array.new
+                                                @findVote = Vote.find_all_by_post_id(childPosts.id)
+                                                @foundFlag = false
+                                                @findVote.each do
+                                                    |vote|
+                                                    if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                                        @foundFlag = true
+                                                    end
+                                                end
+                                            %>
+                                            <% if(@foundFlag == false) %>
+                                                <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + childPosts.id.to_s()), posts_vote_path(:id => childPosts.id) %>
+                                            <% elsif(@foundFlag == true) %>
+                                                <div style="background-color: green"><i>Voted</i></div>
+                                            <% end %>
+                                        <% end %>
+                                    </td>
+                                    <td>
+                                        <%= link_to childPosts.postString, childPosts %>
+                                    </td>
+                                 </tr>
+                             </table>
+
+                             <div align="right">
+                                 <%= User.find(childPosts.user_id).userName %>
+
+                                 <% if(childPosts.user_id == User.find_by_userName(session[:userName]).id) %>
+                                    <%= " | " %>
+                                    <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + childPosts.id.to_s()), edit_post_path(childPosts) %>
+                                 <% end %>
+
+                                <% if(session[:loginType] == 'admin') %>
+                                    <%= " | " %>
+                                    <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + childPosts.id.to_s()), childPosts, confirm: 'Are you sure?', method: :delete %>
+                                <% end %>
+                             </div>
+                             <hr style="color: red" />
+                        <% end %>
+                    <% end %>
+                </fieldset>
+            <% end %>
+            </fieldset>
+          <br />
+        <% end %>
+    <% end %>
+
+
+    <br />
+    <br />
+    <b><center>Other posts</center></b>
+    <% if @parentPostsForToggle.length == 0 %>
+    <% else %>
+            <% @parentPostsForToggle.each do |parentPost|  %>
+                 <fieldset style="border-style: solid; border-color: blue">
+                    <table width = "200" height = "50">
+                    <tr>
+                        <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                            <%= Vote.find_all_by_post_id(parentPost.id).length %>
+        
+                            <br />
+                            <% if(parentPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                                <div style="background-color: red"><i>Author</i></div>
+                            <% else %>
+                                <%  @findVote = Array.new
+                                    @findVote = Vote.find_all_by_post_id(parentPost.id)
+                                    @foundFlag = false
+                                    @findVote.each do
+                                        |vote|
+                                        if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                        @foundFlag = true
+                                        end
+                                    end
+                                %>
+                                <% if(@foundFlag == false) %>
+                                    <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + parentPost.id.to_s()), posts_vote_path(:id => parentPost.id) %>
+                                <% elsif(@foundFlag == true) %>
+                                    <div style="background-color: green"><i>Voted</i></div>
+                                <% end %>
+                            <% end %>
+                        <td>
+        
+                        </td>
+                        <td>
+                          <%= link_to parentPost.postString, parentPost %>
+                        </td>
+                    </tr>
+                    </table>
+        
+                    <div align="right">
+                        <%= User.find(parentPost.user_id).userName %>
+        
+                        <% if(session[:userName] != nil) %>
+                            <% if(parentPost.user_id == User.find_by_userName(session[:userName]).id) %>
+                                <%= " | " %>
+                                <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + parentPost.id.to_s()), edit_post_path(parentPost) %>
+                            <% end %>
+        
+                            <% if(session[:loginType] == 'admin') %>
+                                <%= " | " %>
+                                <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + parentPost.id.to_s()), parentPost, confirm: 'Are you sure?', method: :delete %>
+                            <% end %>
+                            <%= " | " %>
+                            <%= link_to image_tag("/assets/reply-icon.gif", :alt => 'reply-icon-' + parentPost.id.to_s()), posts_reply_path(:id => parentPost.id) %>
+                        <% end %>
+                    </div>
+        
+                    <b>All Replies</b>
+                    <br />
+                    <% @childPostForToggle = Post.find(:all, :conditions => ["parentPostID = ?",parentPost.id] ) %>
+        
+                    <% if(@childPostForToggle.length == 1) %>
+                        <div style="color: red">
+                            No replies for this post.
+                        </div>
+        
+                    <% elsif(@childPostForToggle.length > 1) %>
+                        <fieldset style="border-style: solid; border-color: #a52a2a">
+                            <% @childPostForToggle.each do |childPosts| %>
+                                <% if (childPosts.id != childPosts.parentPostID) %>
+                                     <table width = "200" height = "50">
+                                         <tr>
+                                            <td></td>
+                                            <td height = 20 width = 40 bgcolor="#f0f0f0" align="center" >
+                                                <%= Vote.find_all_by_post_id(childPosts.id).length %>
+                                                <br />
+                                                <% if(childPosts.user_id == User.find_by_userName(session[:userName]).id) %>
+                                                    <div style="background-color: red"><i>Author</i></div>
+                                                <% else %>
+                                                    <%  @findVote = Array.new
+                                                        @findVote = Vote.find_all_by_post_id(childPosts.id)
+                                                        @foundFlag = false
+                                                        @findVote.each do
+                                                            |vote|
+                                                            if(vote.user_id == User.find_by_userName(session[:userName]).id)
+                                                                @foundFlag = true
+                                                            end
+                                                        end
+                                                    %>
+                                                    <% if(@foundFlag == false) %>
+                                                        <%= link_to image_tag("/assets/like.jpg", :alt => 'like-icon-' + childPosts.id.to_s()), posts_vote_path(:id => childPosts.id) %>
+                                                    <% elsif(@foundFlag == true) %>
+                                                        <div style="background-color: green"><i>Voted</i></div>
+                                                    <% end %>
+                                                <% end %>
+                                            </td>
+                                            <td>
+                                                <%= link_to childPosts.postString, childPosts %>
+                                            </td>
+                                         </tr>
+                                     </table>
+        
+                                     <div align="right">
+                                         <%= User.find(childPosts.user_id).userName %>
+        
+                                         <% if(childPosts.user_id == User.find_by_userName(session[:userName]).id) %>
+                                            <%= " | " %>
+                                            <%= link_to image_tag("/assets/edit-icon.png", :alt => 'edit-icon-' + childPosts.id.to_s()), edit_post_path(childPosts) %>
+                                         <% end %>
+        
+                                        <% if(session[:loginType] == 'admin') %>
+                                            <%= " | " %>
+                                            <%= link_to image_tag("/assets/delete-icon.png", :alt => 'delete-icon-' + childPosts.id.to_s()), childPosts, confirm: 'Are you sure?', method: :delete %>
+                                        <% end %>
+                                     </div>
+                                     <hr />
+                                <% end %>
+                            <% end %>
+                        </fieldset>
+                    <% end %>
+                 </fieldset>
+                <br />
+            <% end %>
+    <% end %>
+
+<% end %>
+</div>

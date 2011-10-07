@@ -1,0 +1,30 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/Fixtures.html
+
+one:
+  id: 1
+  postString: simpleString1
+  user: one
+  parentPostID: 1
+
+
+two:
+  id: 2
+  postString: simpleString2
+  user: two
+  parentPostID: 2
+
+
+three:
+  id: 3
+  postString: simpleString3
+  user: three
+  parentPostID: 3
+
+
+<% (4..100).each do |i| %>
+post_<%= i %>:
+  id: <%= i %>
+  postString: postString_<%= i %>
+  user: fixuser_<%= i %>
+  parentPostID: <%= i %>
+<% end %>

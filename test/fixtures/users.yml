@@ -1,0 +1,32 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/Fixtures.html
+
+one:
+  id: 1
+  userName: "jyothi"
+  password: "yyyyyyyyy"
+  email: "email.com"
+  loginType: "student"
+
+two:
+  id: 2
+  userName: "cndura"
+  password: "cndura"
+  email: "cndura@email.com"
+  loginType: "student"
+
+three:
+  id: 3
+  userName: "admin123"
+  password: "admin123"
+  email: "admin@gmail.com"
+  logintype: "admin"
+
+<% (4..100).each do |i| %>
+fixuser_<%= i %>:
+  id: <%= i %>
+  userName: user_<%= i %>
+  password: password_<%= i %>
+  email: emailid_<%= i %>
+  loginType: student
+<% end %>
+

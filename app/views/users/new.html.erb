@@ -1,0 +1,7 @@
+<% if((session[:userName] == nil) && session[:loginType] == nil) %>
+    <h1>Create a new student account</h1>
+<% else %>
+    <h1>Create a new account</h1>
+<% end %>
+<%= render 'form' %>
+

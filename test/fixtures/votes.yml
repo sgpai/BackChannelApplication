@@ -1,0 +1,12 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/Fixtures.html
+
+one:
+  numberOfVotes: 1
+  user: one
+  post: two
+
+two:
+  numberOfVotes: 1
+  user: two
+  post: one
+

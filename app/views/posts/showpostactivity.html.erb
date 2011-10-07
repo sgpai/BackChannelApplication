@@ -1,0 +1,83 @@
+<h1>Posts activity</h1>
+
+<table width="100%" height="100%">
+  <tr>
+    <td align="center" width="50%">
+        <b>All votes aggregated by parent posts</b><br />
+        <table width="70%" border="">
+          <tr>
+            <td width="75%">
+              <b>Post</b>
+            </td>
+            <td>
+              <b>Votes</b>
+            </td>
+            <td>
+              <b>Replies</b>
+            </td>
+          </tr>
+          <% @parentPosts.each do |parentPost| %>
+            <tr>
+              <td>
+                <%= link_to parentPost.postString, parentPost %>
+              </td>
+              <td>
+                <%= parentPost.totalVotes %>
+              </td>
+              <td>
+                <%= Post.find(:all, :conditions => ["parentPostID = ? and parentPostID <> id", parentPost.id]).length %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+    </td>
+    <td align="center" width="25%">
+        <b>User contribution(Posts)</b><br />
+        <table border="1">
+          <tr>
+            <td>
+              <b>Users</b>
+            </td>
+            <td>
+              <b>Total Posts</b>
+            </td>
+          </tr>
+          <% @userByPosts.each do |userByPost| %>
+            <tr>
+              <td>
+                <%= link_to User.find(userByPost.userID).userName, User.find(userByPost.userID) %>
+              </td>
+              <td>
+                <%= userByPost.numberOfPosts %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+    </td>
+    <td align="center" width="25%">
+        <b>User contribution(Votes)</b><br />
+        <table border="1">
+          <tr>
+            <td>
+              <b>Users</b>
+            </td>
+            <td>
+              <b>Total Likes</b>
+            </td>
+          </tr>
+          <% @userByVotes.each do |userByVote| %>
+            <tr>
+              <td>
+                <%= link_to User.find(userByVote.userID).userName, User.find(userByVote.userID) %>
+              </td>
+              <td>
+                <%= userByVote.numberOfVotes %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+    </td>
+  </tr>
+</table>
+
+<%= link_to image_tag("/assets/back.button.png", :alt => 'back-button-icon'), @user %>
